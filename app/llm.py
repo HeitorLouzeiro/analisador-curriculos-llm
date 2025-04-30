@@ -3,7 +3,7 @@ import time
 import requests
 
 
-def consultar_llm_local(prompt: str, model="tinyllama"):
+def consultar_llm_local(prompt: str, model="llama3.2"):
     # Usa tinyllama como modelo padrão por exigir menos memória
     response = requests.post(
         "http://ollama:11434/api/generate",
