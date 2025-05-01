@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Optional
+from typing import Optional
 
 import requests
 
@@ -9,23 +9,31 @@ class LLMService:
         self.base_url = base_url
         self.default_model = "llama3.2"
         self.fallback_model = "phi"
+        self.default_temperature = 0.4
 
     def criar_prompt_analise(self, texto: str, query: str) -> str:
         """Cria um prompt para análise de currículo com requisitos específicos."""
         return f"""
-                    Você é um especialista em RH. Avalie o currículo abaixo em relação aos requisitos:
-                    "{query}"
+                    Você é um especialista em Recursos Humanos com experiência em análise de currículos e recrutamento por competências.
 
-                    Currículo:
+                    Avalie o currículo abaixo com base nos seguintes requisitos da vaga: "{query}"
+
+                    Currículo do candidato:
                     {texto}
 
-                    Responda se ele atende aos requisitos e justifique.
+                    Sua tarefa:
 
-                    Responda a perguntas do tipo "Qual desses currículos se enquadra melhor 
-                    para a vaga de Engenheiro de Software com requisitos {...}?" com 
-                    justificativas baseadas no conteúdo.
+                    Diga se o currículo atende (ou não) aos requisitos que veio da query.
 
-                    E me responda em português. (obrigatório!)
+                    Justifique sua resposta com base nas informações presentes no currículo.
+
+                    Importante:
+
+                    A resposta deve estar em português.
+
+                    Seja objetivo, mas forneça detalhes suficientes para embasar sua avaliação.
+
+                    Considere experiência profissional, formação acadêmica, habilidades técnicas e comportamentais, quando aplicável.
                 """
 
     def criar_prompt_resumo(self, texto: str) -> str:
@@ -53,7 +61,13 @@ class LLMService:
         try:
             response = requests.post(
                 f"{self.base_url}/api/generate",
-                json={"model": model, "prompt": prompt, "stream": False}
+                json={
+                    "model": model,
+                    "prompt": prompt,
+                    "stream": False,
+                    "temperature": self.default_temperature
+                }
+
             )
             json_response = response.json()
 
@@ -64,16 +78,11 @@ class LLMService:
                 return self._tentar_com_modelo_alternativo(prompt)
 
             # Lidando com diferentes formatos de resposta
+            json_response = response.json()
+
             if "response" in json_response:
                 return json_response["response"]
-            elif "response_data" in json_response:
-                return json_response["response_data"]
-            elif "generation" in json_response:
-                return json_response["generation"]
-            elif "error" in json_response:
-                return f"Erro do modelo: {json_response['error']}"
             else:
-                print(f"Estrutura da resposta: {json_response}")
                 return str(json_response)
 
         except Exception as e:
@@ -93,8 +102,13 @@ class LLMService:
             # Tenta novamente com o modelo alternativo
             response = requests.post(
                 f"{self.base_url}/api/generate",
-                json={"model": self.fallback_model,
-                      "prompt": prompt, "stream": False}
+                json={
+                    "model": self.fallback_model,
+                    "prompt": prompt,
+                    "stream": False,
+                    "temperature": self.default_temperature
+                }
+
             )
             json_response = response.json()
 
