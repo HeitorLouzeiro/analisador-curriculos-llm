@@ -58,16 +58,14 @@ class AnaliseService:
         resultados_modelos = [AnaliseResultado(
             **resultado) for resultado in resultados]
 
-        # Cria o log com ou sem request_id
+        # Cria o log com todos os parâmetros incluindo request_id
+        # O request_id já foi garantido como não nulo na camada do router
         log_params = {
             "user_id": user_id,
             "query": query,
+            "request_id": request_id,
             "resultado": resultados_modelos
         }
-
-        # Apenas adiciona request_id se não for None
-        if request_id is not None:
-            log_params["request_id"] = request_id
 
         log = LogAnalise(**log_params)
 

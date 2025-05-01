@@ -1,3 +1,4 @@
+import uuid
 from typing import Dict, List, Optional
 
 from fastapi import (APIRouter, Body, Depends, File, Form, HTTPException,
@@ -164,6 +165,10 @@ async def analisar_curriculos(
                 status_code=422,
                 detail="É necessário enviar pelo menos um arquivo de currículo para análise. Que seja PDF ou imagem."
             )
+
+        # Garante que request_id nunca está vazio ou nulo
+        if request_id is None or request_id.strip() == "":
+            request_id = str(uuid.uuid4())
 
         resultado = await analise_service.analisar_curriculos(
             arquivos=arquivos,
