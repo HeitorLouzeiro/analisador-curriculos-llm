@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabio LLM OCR API - Guia de Uso</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #0055a6;
+            margin-top: 0;
+        }
+        h2 {
+            color: #0066cc;
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #0077e6;
+        }
+        code {
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            padding: 2px 5px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        pre {
+            background-color: #f8f8f8;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        .tip {
+            background-color: #f6f9ff;
+            border-left: 4px solid #3a86ff;
+            padding: 10px 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .warning {
+            background-color: #fff8f0;
+            border-left: 4px solid #ff9900;
+            padding: 10px 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .api-section {
+            margin-bottom: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f8f8;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab.active {
+            background-color: #0066cc;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .button {
+            display: inline-block;
+            background-color: #0066cc;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fabio LLM OCR API - Guia de Uso</h1>
+        <p>
+            Bem-vindo à documentação da API do Fabio LLM OCR. Esta API permite analisar currículos usando 
+            Reconhecimento Óptico de Caracteres (OCR) e Modelos de Linguagem (LLM).
+        </p>
+
+        <div class="api-section">
+            <h2>Visão Geral</h2>
+            <p>
+                Esta API permite dois modos principais de operação:
+            </p>
+            <ul>
+                <li><strong>Análise de Requisitos</strong>: Avalia currículos com base em requisitos específicos de uma vaga</li>
+                <li><strong>Resumo Automático</strong>: Gera um resumo estruturado do currículo com informações principais</li>
+            </ul>
+        </div>
+
+        <div class="api-section">
+            <h2>Endpoint Principal: /api/analisar</h2>
+            <p>
+                Este endpoint processa arquivos de currículo (PDF ou imagens) e retorna análises ou resumos.
+            </p>
+
+            <h3>Parâmetros</h3>
+            <table>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Obrigatório</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td>arquivos</td>
+                    <td>File</td>
+                    <td>Sim</td>
+                    <td>Um ou mais arquivos de currículo (PDF ou imagens)</td>
+                </tr>
+                <tr>
+                    <td>user_id</td>
+                    <td>String</td>
+                    <td>Sim</td>
+                    <td>ID do usuário que está realizando a análise</td>
+                </tr>
+                <tr>
+                    <td>query</td>
+                    <td>String</td>
+                    <td>Não</td>
+                    <td>Requisitos da vaga para análise comparativa. Se omitido, gera resumo automático</td>
+                </tr>
+                <tr>
+                    <td>request_id</td>
+                    <td>String</td>
+                    <td>Não</td>
+                    <td>ID opcional para rastreamento da solicitação</td>
+                </tr>
+            </table>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('tab1', this)">Exemplo com Query</div>
+                <div class="tab" onclick="switchTab('tab2', this)">Exemplo sem Query</div>
+            </div>
+
+            <div id="tab1" class="tab-content active">
+                <h3>Exemplo: Análise de Currículo com Requisitos</h3>
+                <p>Neste modo, a API avalia o currículo em relação aos requisitos específicos da vaga.</p>
+                
+                <h4>Request</h4>
+                <p>POST /api/analisar</p>
+                <pre>
+Formato: multipart/form-data
+
+Campos:
+- arquivos: curriculo_candidato1.pdf
+- user_id: user123
+- query: "Desenvolvedor Python com experiência em FastAPI, MongoDB e pelo menos 2 anos de experiência"
+                </pre>
+
+                <h4>Response</h4>
+                <pre>
+{
+  "id": "6462a8e94f6d7b2e30a1c2d3",
+  "request_id": "e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b",
+  "user_id": "user123",
+  "timestamp": "2025-05-01T14:30:45.123Z",
+  "query": "Desenvolvedor Python com experiência em FastAPI, MongoDB e pelo menos 2 anos de experiência",
+  "resultado": [
+    {
+      "arquivo": "curriculo_candidato1.pdf",
+      "resposta": "O currículo atende parcialmente aos requisitos da vaga.\n\nO candidato possui sólida experiência com Python (3 anos) e conhecimento em FastAPI como mencionado no projeto de API RESTful que desenvolveu.\n\nNo entanto, não há menção explícita de experiência com MongoDB, apenas com bancos SQL.\n\nO tempo total de experiência como desenvolvedor ultrapassa os 2 anos exigidos, com 3 anos em desenvolvimento Python.\n\nRecomendação: Candidato potencialmente adequado, mas recomenda-se verificar durante a entrevista o conhecimento em MongoDB."
+    }
+  ]
+}
+                </pre>
+            </div>
+
+            <div id="tab2" class="tab-content">
+                <h3>Exemplo: Resumo Automático de Currículo</h3>
+                <p>Neste modo, a API gera um resumo estruturado destacando as informações principais do currículo.</p>
+                
+                <h4>Request</h4>
+                <p>POST /api/analisar</p>
+                <pre>
+Formato: multipart/form-data
+
+Campos:
+- arquivos: curriculo_candidato1.pdf
+- user_id: user123
+                </pre>
+
+                <h4>Response</h4>
+                <pre>
+{
+  "id": "7563b9f95e7c8d3f41b2d3e4",
+  "request_id": "f6e5d4c3-b2a1-9e8d-7f6e-5d4c3b2a1e9f",
+  "user_id": "user123",
+  "timestamp": "2025-05-01T15:45:30.987Z",
+  "query": null,
+  "resultado": [
+    {
+      "arquivo": "curriculo_candidato1.pdf",
+      "resumo": "Nome: João Silva\n\nExperiência:\n- Desenvolvedor Backend Python (2022-atual): Implementação de APIs RESTful com FastAPI, dockerização de aplicações, testes automatizados\n- Analista de Sistemas (2020-2022): Desenvolvimento de aplicações web com Django, manutenção de bancos de dados PostgreSQL\n\nHabilidades:\n- Linguagens: Python (avançado), JavaScript (intermediário), SQL (avançado)\n- Frameworks: FastAPI, Django, Flask\n- Ferramentas: Docker, Git, Jenkins, AWS\n- Idiomas: Português (nativo), Inglês (avançado)"
+    }
+  ]
+}
+                </pre>
+            </div>
+
+            <div class="tip">
+                <strong>Dica:</strong> Para melhor desempenho, envie arquivos de boa qualidade. PDFs com texto selecionável 
+                funcionam melhor, mas o sistema também pode processar imagens ou PDFs escaneados.
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>Comportamento do Modelo LLM</h2>
+            <p>
+                A API utiliza modelos de linguagem locais através do Ollama para análise dos currículos:
+            </p>
+            <ul>
+                <li><strong>Modelo Primário:</strong> llama3.2 - Utilizado para a maioria das análises</li>
+                <li><strong>Modelo Secundário:</strong> phi - Utilizado como fallback em caso de problemas de memória</li>
+            </ul>
+            
+            <div class="warning">
+                <strong>Observação:</strong> Os resultados podem variar dependendo do modelo utilizado e da 
+                qualidade do texto extraído pelo OCR. Em caso de textos muito longos ou complexos, 
+                o sistema pode precisar recorrer ao modelo secundário.
+            </div>
+        </div>
+
+        <a href="/docs" class="button">Ir para Documentação Swagger</a>
+    </div>
+
+    <script>
+        function switchTab(tabId, tabElement) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab headers
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to selected tab
+            document.getElementById(tabId).classList.add('active');
+            tabElement.classList.add('active');
+        }
+    </script>
+</body>
+</html>
