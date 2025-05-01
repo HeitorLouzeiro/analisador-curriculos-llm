@@ -18,11 +18,34 @@ Sistema de análise inteligente de currículos que combina OCR (Reconhecimento �
 - **PyMuPDF (fitz)**: Para processamento avançado de PDFs
 - **Docker**: Para containerização da aplicação
 
+### Referências para Resolução dos Problemas 
+
+  1. **Otimização do Pipeline de OCR e Análise**  
+    - Vídeos: [IA GRATUITA - Como instalar rodar modelos LLM localmente em menos de 30 minutos! ](https://www.youtube.com/watch?v=sq5TOVWUikU&t)  
+    - Repositórios: [asimov-academy/cv-analyzer - Implementação de análise com AI](https://github.com/asimov-academy/cv-analyzer/blob/main/analyze/ai.py)
+
+
+
+  <p>Essas referências fornecem insights práticos e exemplos de código que podem ser adaptados para resolver os problemas identificados no sistema.</p>
+
+
+### Histórico de Melhorias de Desempenho
+
+  1. **Primeira Implementação com Hugging Face**  
+    - **Descrição**: Inicialmente, o sistema utilizava modelos da Hugging Face para análise de currículos. O tempo médio de processamento era de aproximadamente 7 minutos por arquivo PDF.  
+    - **Problema**: O tempo elevado tornava o sistema inviável para uso em larga escala.  
+    - **Solução**: Após pesquisa e testes, foi realizada a migração para o Ollama, utilizando modelos LLM otimizados para execução local.  
+
+  2. **Resultados Após a Otimização**  
+    - **Descrição**: Com a adoção do Ollama e ajustes no pipeline de OCR e análise, o tempo médio de processamento foi reduzido para cerca de 1 minuto por arquivo PDF.  
+    - **Referência Utilizada**:  
+      - Vídeo: [Domine o Reconhecimento Óptico de Caracteres com PaddleOCR: Tutorial Completo em Python](https://www.youtube.com/watch?v=kkgN3hzkSs4)  
+      - Repositório: [asimov-academy/cv-analyzer - Implementação de análise com AI](https://github.com/asimov-academy/cv-analyzer/blob/main/analyze/ai.py)
+
+
 ## 🛠️ Problemas Conhecidos e Soluções
 
 ### Problemas Identificados
-
-
 
 1. **Tempo de processamento elevado**  
   - **Descrição**: O tempo médio de leitura por arquivo é de aproximadamente 1 minuto, dependendo do tamanho do arquivo. Arquivos resumidos levam cerca de 50 segundos.  
@@ -42,29 +65,6 @@ Sistema de análise inteligente de currículos que combina OCR (Reconhecimento �
     - **Solução**: Testar diferentes modelos disponíveis no Ollama para identificar aquele que melhor atende às necessidades do sistema. Além disso, permitir que o usuário selecione o modelo desejado via configuração na API ou interface.
 
 
-### Referências para Resolução dos Problemas 
-
-  1. **Otimização do Pipeline de OCR e Análise**  
-    - Vídeo: [Como otimizar pipelines de OCR com PaddleOCR](https://www.youtube.com/watch?v=sq5TOVWUikU&t)  
-    - Repositório: [asimov-academy/cv-analyzer - Implementação de análise com AI](https://github.com/asimov-academy/cv-analyzer/blob/main/analyze/ai.py)
-
-
-
-    Essas referências fornecem insights práticos e exemplos de código que podem ser adaptados para resolver os problemas identificados no sistema.
-
-
-### Histórico de Melhorias de Desempenho
-
-  1. **Primeira Implementação com Hugging Face**  
-    - **Descrição**: Inicialmente, o sistema utilizava modelos da Hugging Face para análise de currículos. O tempo médio de processamento era de aproximadamente 7 minutos por arquivo PDF.  
-    - **Problema**: O tempo elevado tornava o sistema inviável para uso em larga escala.  
-    - **Solução**: Após pesquisa e testes, foi realizada a migração para o Ollama, utilizando modelos LLM otimizados para execução local.  
-
-  2. **Resultados Após a Otimização**  
-    - **Descrição**: Com a adoção do Ollama e ajustes no pipeline de OCR e análise, o tempo médio de processamento foi reduzido para cerca de 1 minuto por arquivo PDF.  
-    - **Referência Utilizada**:  
-      - Vídeo: [Domine o Reconhecimento Óptico de Caracteres com PaddleOCR: Tutorial Completo em Python](https://www.youtube.com/watch?v=kkgN3hzkSs4)  
-      - Repositório: [asimov-academy/cv-analyzer - Implementação de análise com AI](https://github.com/asimov-academy/cv-analyzer/blob/main/analyze/ai.py)
 
 
 
