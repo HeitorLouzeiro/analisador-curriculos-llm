@@ -1,10 +1,10 @@
 from typing import Dict, List, Optional
 
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 
 from ..models.log import AnaliseResultado, LogAnalise
 from ..repositories.log_repository import LogRepository
-from ..services.llm_service import LLMService
+from ..services.llm_service import LLMService, ModelNotFoundException
 from ..services.ocr_service import OCRService
 
 
@@ -27,6 +27,12 @@ class AnaliseService:
                 prompt = self.llm_service.criar_prompt_resumo(texto)
                 resumo = self.llm_service.consultar_llm(prompt)
                 return {"arquivo": filename, "resumo": resumo}
+        except ModelNotFoundException as e:
+            # Propagando a exceção específica para ser tratada no nível do router
+            raise HTTPException(
+                status_code=503,
+                detail=f"Serviço de LLM indisponível: {str(e)}"
+            )
         except Exception as e:
             print(f"Erro ao processar currículo {filename}: {e}")
             return {"arquivo": filename, "erro": str(e)}

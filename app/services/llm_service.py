@@ -1,14 +1,17 @@
-import time
 from typing import Optional
 
 import requests
+
+
+class ModelNotFoundException(Exception):
+    """Exceção lançada quando o modelo LLM requisitado não está disponível."""
+    pass
 
 
 class LLMService:
     def __init__(self, base_url="http://ollama:11434"):
         self.base_url = base_url
         self.default_model = "llama3.2"
-        self.fallback_model = "phi"
         self.default_temperature = 0.4
 
     def criar_prompt_analise(self, texto: str, query: str) -> str:
@@ -67,55 +70,30 @@ class LLMService:
                     "stream": False,
                     "temperature": self.default_temperature
                 }
-
             )
             json_response = response.json()
 
-            # Verifica se há erro de memória
-            if "error" in json_response and "memory" in json_response["error"].lower():
-                print(
-                    f"Erro de memória com modelo {model}. Tentando com modelo menor...")
-                return self._tentar_com_modelo_alternativo(prompt)
+            # Verificar se há erro de modelo não encontrado
+            if "error" in json_response:
+                error_msg = str(json_response["error"]).lower()
+                if "not found" in error_msg:
+                    raise ModelNotFoundException(
+                        f"Modelo '{model}' não encontrado")
+                elif "memory" in error_msg:
+                    return (f"Erro de memória com modelo {model}. "
+                            f"Por favor, baixe um modelo mais leve para o seu ambiente Docker "
+                            f"usando 'docker exec -it ollama-container ollama pull [modelo-leve]' "
+                            f"e tente novamente.")
 
             # Lidando com diferentes formatos de resposta
-            json_response = response.json()
-
             if "response" in json_response:
                 return json_response["response"]
             else:
                 return str(json_response)
 
+        except ModelNotFoundException:
+            # Repropagar a exceção para ser tratada no nível superior
+            raise
         except Exception as e:
             print(f"Erro ao consultar LLM: {e}")
             return f"Erro: {str(e)}"
-
-    def _tentar_com_modelo_alternativo(self, prompt: str) -> str:
-        """Tenta consultar LLM usando o modelo alternativo."""
-        try:
-            # Baixa o modelo alternativo, se necessário
-            requests.post(
-                f"{self.base_url}/api/pull",
-                json={"model": self.fallback_model}
-            )
-            time.sleep(2)  # Aguarda carregamento do modelo
-
-            # Tenta novamente com o modelo alternativo
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json={
-                    "model": self.fallback_model,
-                    "prompt": prompt,
-                    "stream": False,
-                    "temperature": self.default_temperature
-                }
-
-            )
-            json_response = response.json()
-
-            if "response" in json_response:
-                return json_response["response"]
-            else:
-                return str(json_response)
-
-        except Exception as e:
-            return f"Erro com modelo alternativo: {str(e)}"
