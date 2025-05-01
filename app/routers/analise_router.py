@@ -1,11 +1,12 @@
 import uuid
 from typing import Dict, List, Optional
 
-from fastapi import (APIRouter, Body, Depends, File, Form, HTTPException,
-                     UploadFile)
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from ..docs.analise_docs import (ANALISE_DESCRIPTION, ANALISE_RESPONSES,
+                                 ANALISE_SUMMARY)
 from ..services.analise_service import AnaliseService
 from ..utils.json_encoder import serializar_para_json
 
@@ -26,55 +27,6 @@ class AnaliseResponseExemplo(BaseModel):
     resultado: List[AnaliseResultadoExemplo]
 
 
-# Exemplos para documentação
-EXEMPLO_QUERY = "Desenvolvedor Python com experiência em FastAPI, MongoDB e pelo menos 2 anos de experiência"
-
-EXEMPLO_RESPOSTA_COM_QUERY = {
-    "id": "6462a8e94f6d7b2e30a1c2d3",
-    "request_id": "e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b",
-    "user_id": "user123",
-    "timestamp": "2025-05-01T14:30:45.123Z",
-    "query": EXEMPLO_QUERY,
-    "resultado": [
-        {
-            "arquivo": "curriculo_candidato1.pdf",
-            "resposta": """O currículo atende parcialmente aos requisitos da vaga.
-
-O candidato possui sólida experiência com Python (3 anos) e conhecimento em FastAPI como mencionado no projeto de API RESTful que desenvolveu.
-
-No entanto, não há menção explícita de experiência com MongoDB, apenas com bancos SQL.
-
-O tempo total de experiência como desenvolvedor ultrapassa os 2 anos exigidos, com 3 anos em desenvolvimento Python.
-
-Recomendação: Candidato potencialmente adequado, mas recomenda-se verificar durante a entrevista o conhecimento em MongoDB."""
-        }
-    ]
-}
-
-EXEMPLO_RESPOSTA_SEM_QUERY = {
-    "id": "7563b9f95e7c8d3f41b2d3e4",
-    "request_id": "f6e5d4c3-b2a1-9e8d-7f6e-5d4c3b2a1e9f",
-    "user_id": "user123",
-    "timestamp": "2025-05-01T15:45:30.987Z",
-    "query": None,
-    "resultado": [
-        {
-            "arquivo": "curriculo_candidato1.pdf",
-            "resumo": """Nome: João Silva
-
-Experiência:
-- Desenvolvedor Backend Python (2022-atual): Implementação de APIs RESTful com FastAPI, dockerização de aplicações, testes automatizados
-- Analista de Sistemas (2020-2022): Desenvolvimento de aplicações web com Django, manutenção de bancos de dados PostgreSQL
-
-Habilidades:
-- Linguagens: Python (avançado), JavaScript (intermediário), SQL (avançado)
-- Frameworks: FastAPI, Django, Flask
-- Ferramentas: Docker, Git, Jenkins, AWS
-- Idiomas: Português (nativo), Inglês (avançado)"""
-        }
-    ]
-}
-
 router = APIRouter(tags=["análise"])
 
 # Singleton do serviço de análise
@@ -86,60 +38,10 @@ def get_analise_service():
 
 @router.post(
     "/analisar",
-    summary="Analisa currículos",
-    description="""
-    Extrai texto de currículos usando OCR e realiza análise com LLM.
-    
-    ## Modos de operação
-    
-    1. **Modo Análise (com query)**: Avalia o currículo com base nos requisitos da vaga fornecidos no parâmetro `query`
-    2. **Modo Resumo (sem query)**: Gera um resumo estruturado do currículo extraindo informações chave
-    
-    ## Parâmetros obrigatórios
-    
-    * **arquivos**: Um ou mais arquivos de currículo (PDF ou imagens)
-    * **user_id**: Identificador do usuário que está realizando a análise
-    
-    ## Parâmetros opcionais
-    
-    * **query**: Requisitos da vaga para comparação (se omitido, gera resumo)
-    * **request_id**: Identificador customizado para rastreamento da solicitação
-    
-    ## Formatos de arquivo aceitos
-    
-    PDF (.pdf) e imagens (.png, .jpg, .jpeg, .bmp, .tiff, .tif)
-    """,
+    summary=ANALISE_SUMMARY,
+    description=ANALISE_DESCRIPTION,
     response_model=Dict,
-    responses={
-        200: {
-            "description": "Análise realizada com sucesso",
-            "content": {
-                "application/json": {
-                    "examples": {
-                        "com_query": {
-                            "summary": "Exemplo de resposta com query (análise)",
-                            "description": "Resposta quando uma query com requisitos é fornecida",
-                            "value": EXEMPLO_RESPOSTA_COM_QUERY
-                        },
-                        "sem_query": {
-                            "summary": "Exemplo de resposta sem query (resumo)",
-                            "description": "Resposta quando nenhuma query é fornecida (resumo automático)",
-                            "value": EXEMPLO_RESPOSTA_SEM_QUERY
-                        }
-                    }
-                }
-            }
-        },
-        415: {
-            "description": "Formato de arquivo não suportado"
-        },
-        422: {
-            "description": "Erro de validação (arquivos inválidos ou parâmetros incorretos)"
-        },
-        500: {
-            "description": "Erro interno no processamento"
-        }
-    }
+    responses=ANALISE_RESPONSES
 )
 async def analisar_curriculos(
     arquivos: List[UploadFile] = File(None,

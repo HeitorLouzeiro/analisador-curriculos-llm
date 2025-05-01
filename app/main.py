@@ -83,15 +83,7 @@ async def custom_swagger_ui_html():
 # Página do guia da API personalizado
 
 
-@app.get("/guia", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def api_guide():
     """Retorna a página de guia da API com exemplos detalhados"""
     return templates.TemplateResponse("api_guide.html", {"request": {}})
-
-# Rota de status
-
-
-@app.get("/", tags=["status"])
-async def status():
-    """Retorna o status da API"""
-    return {"status": "online", "api": "Fabio LLM OCR API", "docs": "/docs", "guide": "/guia"}
