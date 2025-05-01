@@ -2,7 +2,7 @@ import os
 from typing import Dict, List, Optional
 
 import fitz  # PyMuPDF
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 from paddleocr import PaddleOCR
 
 
@@ -10,6 +10,9 @@ class OCRService:
     def __init__(self):
         # Inicializa o OCR uma única vez para economizar recursos
         self.ocr = PaddleOCR(use_angle_cls=True, lang="pt")
+        # Formatos de arquivo suportados
+        self.formatos_suportados = ['.pdf', '.png',
+                                    '.jpg', '.jpeg', '.bmp', '.tiff', '.tif']
 
     async def extrair_texto_arquivos(self, arquivos: List[UploadFile]) -> List[str]:
         """Extrai texto de uma lista de arquivos PDF ou imagens."""
@@ -17,6 +20,14 @@ class OCRService:
 
         for arquivo in arquivos:
             try:
+                # Verifica se o formato do arquivo é suportado
+                extensao = os.path.splitext(arquivo.filename.lower())[1]
+                if extensao not in self.formatos_suportados:
+                    raise HTTPException(
+                        status_code=415,  # Unsupported Media Type
+                        detail=f"Formato de arquivo '{extensao}' não é aceito. Formatos aceitos: {', '.join(self.formatos_suportados)}"
+                    )
+
                 # Salva o arquivo temporariamente para processamento
                 temp_path = f"/tmp/{arquivo.filename}"
                 with open(temp_path, "wb") as f:
@@ -34,6 +45,9 @@ class OCRService:
                 # Limpa o arquivo temporário
                 os.remove(temp_path)
 
+            except HTTPException as e:
+                # Propaga exceções HTTP para serem tratadas pela API
+                raise e
             except Exception as e:
                 print(f"Erro ao processar arquivo {arquivo.filename}: {e}")
                 resultados.append(f"Erro ao processar arquivo: {str(e)}")

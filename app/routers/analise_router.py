@@ -103,6 +103,10 @@ def get_analise_service():
     
     * **query**: Requisitos da vaga para comparação (se omitido, gera resumo)
     * **request_id**: Identificador customizado para rastreamento da solicitação
+    
+    ## Formatos de arquivo aceitos
+    
+    PDF (.pdf) e imagens (.png, .jpg, .jpeg, .bmp, .tiff, .tif)
     """,
     response_model=Dict,
     responses={
@@ -125,6 +129,9 @@ def get_analise_service():
                 }
             }
         },
+        415: {
+            "description": "Formato de arquivo não suportado"
+        },
         422: {
             "description": "Erro de validação (arquivos inválidos ou parâmetros incorretos)"
         },
@@ -134,7 +141,7 @@ def get_analise_service():
     }
 )
 async def analisar_curriculos(
-    arquivos: List[UploadFile] = File(...,
+    arquivos: List[UploadFile] = File(None,
                                       description="Arquivos de currículo (PDF ou imagens)"),
     query: Optional[str] = Form(
         None, description="Requisitos da vaga para análise comparativa, se omitido gera resumo"),
@@ -151,6 +158,13 @@ async def analisar_curriculos(
     - Caso contrário, resume o currículo destacando pontos principais.
     """
     try:
+        # Validação personalizada para o campo arquivos
+        if not arquivos or len(arquivos) == 0:
+            raise HTTPException(
+                status_code=422,
+                detail="É necessário enviar pelo menos um arquivo de currículo para análise. Que seja PDF ou imagem."
+            )
+
         resultado = await analise_service.analisar_curriculos(
             arquivos=arquivos,
             user_id=user_id,
@@ -161,6 +175,9 @@ async def analisar_curriculos(
         # Serializa o resultado para garantir compatibilidade JSON
         return JSONResponse(content=serializar_para_json(resultado))
 
+    except HTTPException as http_exc:
+        # Preserva o status code original da HTTPException
+        raise http_exc
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Erro ao processar solicitação: {str(e)}")
