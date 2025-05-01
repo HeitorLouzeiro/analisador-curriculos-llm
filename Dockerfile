@@ -20,6 +20,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia todos os arquivos do projeto
 COPY app/ ./app/
+COPY app.py .
+
+# Cria diretório temporário para os arquivos OCR
+RUN mkdir -p /tmp
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
