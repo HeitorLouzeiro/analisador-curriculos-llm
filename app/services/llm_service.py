@@ -13,35 +13,38 @@ class LLMService:
     def criar_prompt_analise(self, texto: str, query: str) -> str:
         """Cria um prompt para análise de currículo com requisitos específicos."""
         return f"""
-Você é um especialista em RH. Avalie o currículo abaixo em relação aos requisitos:
-"{query}"
+                    Você é um especialista em RH. Avalie o currículo abaixo em relação aos requisitos:
+                    "{query}"
 
-Currículo:
-{texto}
+                    Currículo:
+                    {texto}
 
-Responda se ele atende aos requisitos e justifique.
+                    Responda se ele atende aos requisitos e justifique.
 
-Responda a perguntas do tipo "Qual desses currículos se enquadra melhor 
-para a vaga de Engenheiro de Software com requisitos {...}?" com 
-justificativas baseadas no conteúdo.
+                    Responda a perguntas do tipo "Qual desses currículos se enquadra melhor 
+                    para a vaga de Engenheiro de Software com requisitos {...}?" com 
+                    justificativas baseadas no conteúdo.
 
-E me responda em português. (obrigatório!)
-"""
+                    E me responda em português. (obrigatório!)
+                """
 
     def criar_prompt_resumo(self, texto: str) -> str:
         """Cria um prompt para resumir um currículo."""
         return f"""
-Resuma o currículo abaixo destacando as principais habilidades, experiências e qualificações:
+                    ** Solicitação de Resumo de curriculo, sendo respondido em portugues.**
 
-Currículo:
-{texto}
+                    # Curriculo do candidato para resumir:
+                    {texto}
 
-Responda a perguntas do tipo "Qual desses currículos se enquadra melhor 
-para a vaga de Engenheiro de Software com requisitos {...}?" com 
-justificativas baseadas no conteúdo.
+                    **Formato de Output Esperado:**
+                    - Nome: Nome do candidato
 
-E me responda em português. (obrigatório!)
-"""
+                    ** Experiência: **
+                    - Experiência profissional do candidato
+
+                    **Habilidades **
+                    - Habilidades do candidato
+                """
 
     def consultar_llm(self, prompt: str, model: Optional[str] = None) -> str:
         """Consulta o LLM usando o modelo especificado ou o padrão."""
