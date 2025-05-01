@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
@@ -43,19 +43,3 @@ async def analisar_curriculos(
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Erro ao processar solicitação: {str(e)}")
-
-
-@router.get("/logs/{user_id}", summary="Recupera logs de análises por usuário")
-async def obter_logs_por_usuario(
-    user_id: str,
-    analise_service: AnaliseService = Depends(get_analise_service)
-):
-    """
-    Recupera todos os logs de análises feitas por um determinado usuário.
-    """
-    try:
-        logs = analise_service.log_repository.buscar_logs_por_usuario(user_id)
-        return JSONResponse(content=serializar_para_json(logs))
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Erro ao buscar logs: {str(e)}")
