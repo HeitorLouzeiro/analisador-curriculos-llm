@@ -19,7 +19,7 @@ def get_analise_service():
 async def analisar_curriculos(
     arquivos: List[UploadFile] = File(...),
     query: Optional[str] = Form(None),
-    request_id: str = Form(...),
+    request_id: Optional[str] = Form(None),
     user_id: str = Form(...),
     analise_service: AnaliseService = Depends(get_analise_service)
 ):
@@ -32,8 +32,8 @@ async def analisar_curriculos(
     try:
         resultado = await analise_service.analisar_curriculos(
             arquivos=arquivos,
-            request_id=request_id,
             user_id=user_id,
+            request_id=request_id,
             query=query
         )
 

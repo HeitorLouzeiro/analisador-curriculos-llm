@@ -13,7 +13,8 @@ class AnaliseResultado(BaseModel):
 
 
 class LogAnalise(BaseModel):
-    request_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    request_id: Optional[str] = Field(
+        default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     timestamp: datetime = Field(default_factory=datetime.now)
     query: Optional[str] = None

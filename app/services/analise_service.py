@@ -34,8 +34,8 @@ class AnaliseService:
     async def analisar_curriculos(
         self,
         arquivos: List[UploadFile],
-        request_id: str,
         user_id: str,
+        request_id: Optional[str] = None,
         query: Optional[str] = None
     ) -> Dict:
         """Analisa uma lista de currículos e retorna o resultado."""
@@ -51,12 +51,19 @@ class AnaliseService:
         # Cria e salva o log da análise
         resultados_modelos = [AnaliseResultado(
             **resultado) for resultado in resultados]
-        log = LogAnalise(
-            request_id=request_id,
-            user_id=user_id,
-            query=query,
-            resultado=resultados_modelos
-        )
+
+        # Cria o log com ou sem request_id
+        log_params = {
+            "user_id": user_id,
+            "query": query,
+            "resultado": resultados_modelos
+        }
+
+        # Apenas adiciona request_id se não for None
+        if request_id is not None:
+            log_params["request_id"] = request_id
+
+        log = LogAnalise(**log_params)
 
         # Salva no repositório
         return self.log_repository.inserir_log(log)
