@@ -248,14 +248,37 @@ Campos:
             </p>
             <ul>
                 <li><strong>Modelo Primário:</strong> llama3.2 - Utilizado para a maioria das análises</li>
-                <li><strong>Modelo Secundário:</strong> phi - Utilizado como fallback em caso de problemas de memória</li>
             </ul>
             
             <div class="warning">
-                <strong>Observação:</strong> Os resultados podem variar dependendo do modelo utilizado e da 
-                qualidade do texto extraído pelo OCR. Em caso de textos muito longos ou complexos, 
-                o sistema pode precisar recorrer ao modelo secundário.
+                <strong>Observação:</strong> Os resultados podem variar dependendo da qualidade do texto extraído pelo OCR.
+                Em caso de textos muito longos ou se o modelo LLM não estiver disponível, o sistema retornará um erro com código 503.
+                Verifique se o serviço Ollama está ativo e se o modelo necessário está disponível.
             </div>
+        </div>
+
+        <div class="api-section">
+            <h2>Formatos de Arquivo Suportados</h2>
+            <p>O sistema é capaz de processar os seguintes formatos de arquivo:</p>
+            <ul>
+                <li><strong>PDF:</strong> .pdf</li>
+                <li><strong>Imagens:</strong> .png, .jpg, .jpeg, .bmp, .tiff, .tif</li>
+            </ul>
+            <p>
+                O sistema utilizará OCR avançado para extrair texto de arquivos PDF digitalizados ou imagens. 
+                Para PDFs com texto nativo, o sistema tenta primeiro extrair o texto diretamente antes de aplicar OCR.
+            </p>
+        </div>
+
+        <div class="api-section">
+            <h2>Tratamento de Erros</h2>
+            <p>A API pode retornar os seguintes códigos de erro:</p>
+            <ul>
+                <li><strong>422:</strong> Erro de validação - parâmetros inválidos ou faltando (como não fornecer arquivos)</li>
+                <li><strong>415:</strong> Formato de arquivo não suportado</li>
+                <li><strong>500:</strong> Erro interno do servidor</li>
+                <li><strong>503:</strong> Serviço LLM indisponível (por exemplo, modelo não encontrado no Ollama)</li>
+            </ul>
         </div>
 
         <a href="/docs" class="button">Ir para Documentação Swagger</a>

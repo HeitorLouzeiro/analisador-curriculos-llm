@@ -47,8 +47,7 @@ app = FastAPI(
     docs_url=None,  # Desativa o endpoint /docs padrão para personalizá-lo
     redoc_url="/redoc",  # Mantém a documentação ReDoc
     openapi_tags=[
-        {"name": "análise", "description": "Operações de análise de currículos"},
-        {"name": "status", "description": "Verificação de status da API"}
+        {"name": "análise", "description": "Operações de análise de currículos"}
     ]
 )
 
