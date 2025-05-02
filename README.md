@@ -91,15 +91,28 @@ Sistema de análise inteligente de currículos que combina OCR (Reconhecimento �
    docker-compose up -d
    ```
 
-3. Após iniciar o container Ollama, em outro terminal execute:
+3. Após iniciar o container Ollama:
    ```bash
    docker exec fabio_ollama ollama pull llama3.2
    ```
 
-3. A API estará disponível em:
+4. Construa e inicie os containers:  
+    ```bash
+    docker-compose up --build
+    ```
+
+5. A API estará disponível em:
    ```
    http://localhost:8000
    ```
+
+6. Para encerrar os containers em execução, utilize o comando abaixo:
+
+  ```bash
+  docker-compose down
+  ```
+
+  <p align="right">(<a href="#top">voltar ao topo</a>)</p>
 
 ## 📖 Como Usar a API
 
