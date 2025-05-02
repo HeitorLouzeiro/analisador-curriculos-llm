@@ -2,12 +2,16 @@
 
 Sistema de análise inteligente de currículos que combina OCR (Reconhecimento Óptico de Caracteres) com LLM (Modelos de Linguagem Local via Ollama) para extrair e analisar informações de currículos.
 
+### Representação Macro do Sistema.
+
+![Representação Macro do Sistema](.github/representacao.png)
+
 ## 📋 Funcionalidades
 
 - **Extração de texto** de arquivos PDF e imagens usando OCR avançado (PaddleOCR)
 - **Análise de currículos** com base em requisitos específicos de vagas
 - **Resumo automático** destacando pontos principais dos currículos
-- **Histórico de análises** com armazenamento em banco de dados
+- **Log das informações** com armazenamento em banco de dados
 - **API RESTful** com documentação interativa
 
 ## 🛠️ Tecnologias Utilizadas
@@ -72,7 +76,7 @@ Sistema de análise inteligente de currículos que combina OCR (Reconhecimento �
 ## 🚀 Instalação e Execução
 
 ### Pré-requisitos
-- Docker e Docker Compose
+- **Docker e Docker Compose**: Certifique-se de que o Docker está instalado em sua máquina. Você pode baixar e instalar o Docker a partir do site oficial: [Docker](https://www.docker.com/).
 
 ### Utilizando Docker Compose
 
